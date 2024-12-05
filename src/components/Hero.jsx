@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 import { Button } from './ui/button'
+import Link from 'next/link'
 
 export default function Hero() {
     return (
@@ -12,7 +13,9 @@ export default function Hero() {
                 <h2 className='2xl:text-xl'>
                     <strong>AgriKita</strong> hadir untuk mendukung petani menemukan strategi terbaik, dari pengelolaan lahan hingga pemasaran hasil panen dengan data terpercaya.
                 </h2>
-                <Button className='text-[#009257] bg-white hover:bg-#009257'>Coba Gratis</Button>
+                <Button className='text-[#009257] bg-white hover:bg-#009257' asChild>
+                    <Link href={'/register'}>Coba Sekarang!</Link>
+                </Button>
             </div>
 
             <div className='place-content-end place-items-end'>

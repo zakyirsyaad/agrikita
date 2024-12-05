@@ -16,19 +16,23 @@ export default function Header() {
                         <Link href={'/'} className={pathname === '/' ? 'font-semibold' : ''}>Beranda</Link>
                     </li>
                     <li>
-                        <Link href={'/'}>Layanan</Link>
+                        <Link href={'/layanan'}>Layanan</Link>
                     </li>
                     <li>
-                        <Link href={'/'}>kontak</Link>
+                        <Link href={'/kontak'}>kontak</Link>
                     </li>
                     <li>
-                        <Link href={'/'}>About</Link>
+                        <Link href={'/about'}>About</Link>
                     </li>
                 </ul>
             </nav>
             <div className='flex gap-2'>
-                <Button variant='ghost'>Masuk</Button>
-                <Button>Daftar</Button>
+                <Button variant='ghost' asChild>
+                    <Link href={'/login'}>Login</Link>
+                </Button>
+                <Button asChild>
+                    <Link href={'/register'}>Register</Link>
+                </Button>
             </div>
         </header>
     )

@@ -1,5 +1,6 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -7,10 +8,18 @@ const poppins = Poppins({
   variable: "--font-poppins",
   display: "swap",
 });
+
 export const metadata = {
-  title: "Agrikita",
-  description: "Agrikita",
+  title: "AgriKita",
+  description: "Agrikita adalah website yang menyediakan layanan untuk mempermudah para petani dalam mengelola tanaman mereka.",
+  openGraph: {
+    title: "AgriKita",
+    description: "Agrikita adalah website yang menyediakan layanan untuk mempermudah para petani dalam mengelola tanaman mereka.",
+    images: "https://firebasestorage.googleapis.com/v0/b/jekydatabase.appspot.com/o/pixelcut-export%201.png?alt=media&token=fcd78d4a-1af5-4c3d-9044-599f9fb9a921", // Gantilah dengan URL gambar yang sesuai
+    url: "https://agrikita.vercel.app" // Gantilah dengan URL halaman Anda
+  }
 };
+
 
 export default function RootLayout({ children }) {
   return (
@@ -19,6 +28,7 @@ export default function RootLayout({ children }) {
         className={`${poppins.className} antialiased`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

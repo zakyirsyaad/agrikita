@@ -1,9 +1,10 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 export default function Logo() {
     return (
-        <div className='flex items-center gap-2'>
+        <Link href={'/'} className='flex items-center gap-2 z-20'>
             <Image
                 src={"/logo/pixelcut-export 1.png"}
                 alt="logo"
@@ -13,6 +14,6 @@ export default function Logo() {
                 className='bg-white/95 w-10 h-10 rounded-full object-cover'
             />
             <p className='text-white font-semibold'>AgriKita</p>
-        </div>
+        </Link>
     )
 }
