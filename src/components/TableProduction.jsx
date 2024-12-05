@@ -119,8 +119,6 @@ export const columns = [
         enableHiding: false,
         cell: ({ row }) => {
             const product = row.original
-            const { toast } = useToast()
-
             return (
                 <div className="flex items-center space-x-2">
                     <Button
@@ -138,11 +136,7 @@ export const columns = [
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => {
-                            toast({
-                                title: "Product deleted.",
-                                description: `Product ${product.name} has been deleted.`,
-                                variant: "destructive",
-                            })
+                            alert(`Deleting product ${product.name}`)
                         }}
                     >
                         <Trash2 className="h-4 w-4" />

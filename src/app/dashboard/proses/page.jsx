@@ -6,7 +6,7 @@ import moment from 'moment';
 import Image from 'next/image';
 import React from 'react'
 
-export default function page() {
+export default function Page() {
     const [date, setDate] = React.useState(moment().format('MMMM Do YYYY'));
 
     React.useEffect(() => {
