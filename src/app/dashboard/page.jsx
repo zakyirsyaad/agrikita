@@ -1,9 +1,11 @@
 import { ChartDashboard } from '@/components/Chart'
 import StatisticChart from '@/components/StatisticChart'
-import { Boxes, Cloudy, HandCoins, ShoppingCart } from 'lucide-react'
+// import { auth } from '@/util/firebase';
+import { Boxes, Cloudy } from 'lucide-react'
 import React from 'react'
 
 export default function page() {
+
     return (
         <main className='w-full p-5'>
             <section className='grid grid-cols-3 xl:grid-cols-4 gap-5'>
