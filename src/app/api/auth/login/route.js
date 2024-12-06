@@ -25,7 +25,7 @@ export async function POST(req) {
 
         if (error || !user) {
             return new Response(
-                JSON.stringify({ message: 'Invalid credentials' }),
+                JSON.stringify({ message: 'Invalid Email' }),
                 { status: 401, headers: { 'Content-Type': 'application/json' } }
             );
         }
@@ -35,7 +35,7 @@ export async function POST(req) {
 
         if (!isPasswordCorrect) {
             return new Response(
-                JSON.stringify({ message: 'Invalid credentials' }),
+                JSON.stringify({ message: 'Invalid Password' }),
                 { status: 401, headers: { 'Content-Type': 'application/json' } }
             );
         }

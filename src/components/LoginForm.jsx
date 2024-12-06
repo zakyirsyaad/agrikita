@@ -34,7 +34,6 @@ export default function LoginForm() {
 
             // Try to parse the JSON response
             const data = await response.json();
-
             // Handle success
             console.log('User Login', data);
             router.push('/dashboard'); // Navigate to the login page

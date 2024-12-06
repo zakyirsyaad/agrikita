@@ -1,108 +1,58 @@
-import { createClient } from '@/lib/supabase';
-import formidable from 'formidable';
-import fs from 'fs/promises';
-
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
+import { createClient } from "@/lib/supabase";
 
 export async function POST(req) {
     const supabase = createClient();
-    const form = new formidable.IncomingForm({
-        keepExtensions: true,
-    });
-
-    const responseHeaders = {
-        'Content-Type': 'application/json',
-    };
 
     try {
-        // Parse the incoming form
-        const { fields, files } = await new Promise((resolve, reject) => {
-            form.parse(req, (err, fields, files) => {
-                if (err) return reject(err);
-                resolve({ fields, files });
-            });
-        });
+        // Parse body to get file and user ID (assumes `file` is sent as a FormData)
+        const formData = await req.formData();
+        const file = formData.get('file'); // Assuming the file field name is "file"
+        const userId = formData.get('userId'); // Assuming user ID is provided in the request
 
-        const { userId } = fields;
-        const file = files.file;
-
-        // Validate input
-        if (!userId || !file) {
-            return new Response(
-                JSON.stringify({ message: 'Missing userId or file' }),
-                { status: 400, headers: responseHeaders }
-            );
+        if (!file || !userId) {
+            return new Response(JSON.stringify({ error: 'File and userId are required' }), { status: 400 });
         }
 
-        const allowedMimeTypes = ['image/jpeg', 'image/png'];
-        if (!allowedMimeTypes.includes(file.mimetype)) {
-            return new Response(
-                JSON.stringify({ message: 'Unsupported file type. Allowed types are JPEG and PNG.' }),
-                { status: 400, headers: responseHeaders }
-            );
-        }
+        // Generate a unique file path using userId and the original file name
+        const filePath = `users/${userId}/${file.name}`;
 
-        // Upload file to Supabase storage
+        // Upload the file to Supabase storage
         const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('avatars')
-            .upload(
-                `users/${userId}/${file.newFilename}`,
-                fs.createReadStream(file.filepath),
-                {
-                    cacheControl: '3600',
-                    upsert: true,
-                }
-            );
+            .from('avatars') // Replace with your storage bucket name
+            .upload(filePath, file, {
+                upsert: true,
+            });
 
         if (uploadError) {
-            console.error('Upload Error:', uploadError.message);
-            return new Response(
-                JSON.stringify({ message: 'Failed to upload file to storage.' }),
-                { status: 500, headers: responseHeaders }
-            );
+            console.error(uploadError);
+            return new Response(JSON.stringify({ error: 'Failed to upload file' }), { status: 500 });
         }
 
-        // Get public URL for the uploaded file
+        // Generate public URL for the uploaded file
         const { data: publicUrlData } = supabase.storage
             .from('avatars')
-            .getPublicUrl(uploadData.path);
+            .getPublicUrl(filePath);
 
-        if (!publicUrlData || !publicUrlData.publicUrl) {
-            return new Response(
-                JSON.stringify({ message: 'Failed to retrieve public URL.' }),
-                { status: 500, headers: responseHeaders }
-            );
+        if (!publicUrlData) {
+            return new Response(JSON.stringify({ error: 'Failed to get public URL' }), { status: 500 });
         }
 
-        const avatarUrl = publicUrlData.publicUrl;
+        const publicUrl = publicUrlData.publicUrl;
 
-        // Update user's avatar in the database
-        const { error: dbError } = await supabase
+        // Update user record in the `users` table with the photo URL
+        const { error: updateError } = await supabase
             .from('users')
-            .update({ foto: avatarUrl })
+            .update({ foto: publicUrl }) // Assuming the column for the photo URL is named 'foto'
             .eq('id', userId);
 
-        if (dbError) {
-            console.error('Database Error:', dbError.message);
-            return new Response(
-                JSON.stringify({ message: 'Failed to update user profile.' }),
-                { status: 500, headers: responseHeaders }
-            );
+        if (updateError) {
+            console.error(updateError);
+            return new Response(JSON.stringify({ error: 'Failed to update user record' }), { status: 500 });
         }
 
-        return new Response(
-            JSON.stringify({ avatarUrl }),
-            { status: 200, headers: responseHeaders }
-        );
+        return new Response(JSON.stringify({ success: true, publicUrl }), { status: 200 });
     } catch (error) {
-        console.error('Error handling avatar upload:', error);
-        return new Response(
-            JSON.stringify({ message: error.message || 'Server error occurred.' }),
-            { status: 500, headers: responseHeaders }
-        );
+        console.error(error);
+        return new Response(JSON.stringify({ error: 'An unexpected error occurred' }), { status: 500 });
     }
 }
