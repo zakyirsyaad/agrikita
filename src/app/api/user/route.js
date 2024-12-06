@@ -22,7 +22,7 @@ export async function GET(req) {
         const { data: user, error } = await supabase
             .from('users')
             .select('id, nama, email, foto')
-            .eq('id', decoded.id)
+            .eq('email', decoded.email)
             .single();
 
         if (error || !user) {

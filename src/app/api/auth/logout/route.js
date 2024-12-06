@@ -3,8 +3,9 @@ import { cookies } from 'next/headers';
 export async function POST(req) {
     try {
         const cookiesStore = cookies();
-        cookiesStore.delete('accessToken'); // Hapus cookie 'accessToken'
-
+        cookiesStore.getAll().forEach((cookie) => {
+            cookiesStore.delete(cookie.name);
+        });
         return new Response(
             JSON.stringify({ message: 'Logout successful' }),
             { status: 200, headers: { 'Content-Type': 'application/json' } }

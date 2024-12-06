@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 
 export async function middleware(request) {
     const cookiesStore = await cookies(); // Tidak perlu `await` karena `cookies()` bukan async
-    const accessToken = cookiesStore.get('accessToken')?.value;
+    const accessToken = cookiesStore.get('accessToken')?.value
+
 
     // Redirect ke /login jika user tidak punya accessToken dan mencoba akses /dashboard
     if (request.nextUrl.pathname.startsWith('/dashboard') && !accessToken) {

@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react';
 import Logo from './logo';
 import Link from 'next/link';
 import { ArrowRightLeft, LayoutDashboard, Network, Pencil, Recycle } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import Image from 'next/image';
 
 export default function Sidebar({ accessToken }) {
     const pathname = usePathname();
@@ -53,13 +54,14 @@ export default function Sidebar({ accessToken }) {
 
     const [file, setFile] = useState(null);
     const [uploadStatus, setUploadStatus] = useState('');
+    const router = useRouter();
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
     }
 
     const handleUpload = async (e) => {
         e.preventDefault();
-
+        setLoading(true);
         try {
             const formData = new FormData();
             formData.append("file", file);
@@ -73,6 +75,9 @@ export default function Sidebar({ accessToken }) {
             if (res.ok) {
                 const data = await res.json();
                 setUploadStatus(`Success! File URL: ${data.publicUrl}`);
+                setLoading(false);
+                setFile(null);
+                window.location.reload();
                 console.log(data);
             } else {
                 const errorData = await res.json();
@@ -103,9 +108,6 @@ export default function Sidebar({ accessToken }) {
     }
 
 
-
-
-
     return (
         <aside className="bg-[#00452A] w-1/4 space-y-5">
             <div className="text-white bg-gradient-to-br from-[#00452A] to-[#00985B] p-5 rounded-bl-[40px] space-y-5">
@@ -114,13 +116,15 @@ export default function Sidebar({ accessToken }) {
                     <form className="flex flex-col items-center space-y-4 relative">
                         <Avatar className="w-24 h-24 border-2">
                             <AvatarImage src={userData?.foto || '/images/blank-profile-picture-973460_1280.png'} alt="User Avatar" />
-                            <AvatarFallback>{userData?.nama?.charAt(0)}</AvatarFallback>
+                            <AvatarFallback>
+                                <Image src={'/images/blank-profile-picture-973460_1280.png'} alt="User Avatar" width={50} height={50} className='w-full h-full' />
+                            </AvatarFallback>
                         </Avatar>
                         <label className='absolute -top-5 -right-0 hover:scale-105 duration-300'>
                             <Pencil className='' size={30} fill='black' />
                             <Input type="file" onChange={handleFileChange} accept="image/*" className="hidden" />
                         </label>
-                        <Button onClick={handleUpload} className={file ? "block " : "hidden"}>Upload</Button>
+                        <Button onClick={handleUpload} className={file ? "block " : "hidden"} disabled={loading}>Upload</Button>
                     </form>
                     {error && <p>{error}</p>}
                     {loading ? (
